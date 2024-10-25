@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "api/*.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+      { "src": "/api/auth", "dest": "/api/auth.js" },
+      { "src": "/api/messages", "dest": "/api/messages.js" },
+      { "src": "/api/users", "dest": "/api/users.js" },
+      { "src": "/(.*)", "dest": "/frontend/dist/index.html" }
+    ]
+  }
+  
