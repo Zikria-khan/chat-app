@@ -25,6 +25,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
+// Success route for the root path
+app.get("/", (req, res) => {
+    res.status(200).json({ message: "Success!" });
+});
+
 // Serve static files
 const __dirname = path.dirname(new URL(import.meta.url).pathname); // Resolve current directory
 app.use(express.static(path.join(__dirname, "/frontend/dist")));
