@@ -28,6 +28,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
+
+app.get("/api/test", (req, res) => {
+    res.status(200).json({ message: "Success!" });
+});
+app.get("/api",(req,res)=>{
+ res.status.json({message:"Success"})   
+})
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
