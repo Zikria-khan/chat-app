@@ -17,8 +17,6 @@
     }
   ],
   "env": {
-    "MONGO_URI": "@your-mongo-uri-secret",
-    "JWT_SECRET": "@your-jwt-secret" 
   }
 }
  
