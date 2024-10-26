@@ -1,25 +1,22 @@
 {
   "version": 2,
   "builds": [
-      {
-          "src": "*.js",
-          "use": "@vercel/node"
-      }
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-      {
-          "src": "/(.*)",
-          "dest": "/"
-      }
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dist/index.html"
+    }
   ],
-  "headers": [
-      {
-          "source": "/(.*)",
-          "headers": [
-              { "key": "Access-Control-Allow-Origin", "value": "http://localhost:5173" },
-              { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
-              { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
-          ]
-      }
-  ]
+  "env": {
+    "MONGO_URI": "@your-mongo-uri-secret" 
+  }
 }
