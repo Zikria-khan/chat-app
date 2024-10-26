@@ -82,4 +82,4 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
         console.error("Failed to connect to MongoDB:", error.message);
     });
 
-export default app;
+// No longer exporting the app instance

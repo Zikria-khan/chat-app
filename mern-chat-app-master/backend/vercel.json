@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/index.js",
+      "src": "api/index.js", // Adjust this path if necessary
       "use": "@vercel/node"
     }
   ],
@@ -17,6 +17,13 @@
     }
   ],
   "env": {
-    "MONGO_URI": "@your-mongo-uri-secret" 
+    "MONGO_URI": "@your-mongo-uri-secret",
+    "JWT_SECRET": "@your-jwt-secret" 
+  },
+  "functions": {
+    "api/index.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
   }
 }
