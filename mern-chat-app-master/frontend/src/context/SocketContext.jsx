@@ -14,8 +14,14 @@ export const SocketContextProvider = ({ children }) => {
 	const { authUser } = useAuthContext();
 
 	useEffect(() => {
+		// Determine the correct URL based on the environment
+		const socketUrl =
+			process.env.NODE_ENV === "production"
+				? "https://chat-app-yt.onrender.com" // Your production server URL
+				: "http://localhost:3000"; // Local development server
+
 		if (authUser) {
-			const socket = io("https://chat-app-yt.onrender.com", {
+			const socket = io(socketUrl, {
 				query: {
 					userId: authUser._id,
 				},
@@ -23,11 +29,12 @@ export const SocketContextProvider = ({ children }) => {
 
 			setSocket(socket);
 
-			// socket.on() is used to listen to the events. can be used both on client and server side
+			// Listen for online users event
 			socket.on("getOnlineUsers", (users) => {
 				setOnlineUsers(users);
 			});
 
+			// Clean up the socket connection on unmount
 			return () => socket.close();
 		} else {
 			if (socket) {

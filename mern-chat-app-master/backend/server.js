@@ -4,21 +4,26 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import cors from "cors"; 
+import { Server } from "socket.io"; 
+import http from "http"; 
 
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import userRoutes from "./routes/user.routes.js";
-import { app } from "./socket/socket.js"; // Adjust this import based on your socket setup
 
-dotenv.config(); // Load environment variables
+dotenv.config(); 
 
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
+const app = express(); 
 
-const app = express(); // Create an instance of Express
+// CORS configuration
+const corsOptions = {
+    origin: 'http://localhost:3000', // Your client URL
+    methods: ["GET", "POST"],
+    credentials: true, 
+};
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000' })); // CORS configuration
+app.use(cors(corsOptions)); 
 app.use(express.json());
 app.use(cookieParser());
 
@@ -33,21 +38,48 @@ app.get("/", (req, res) => {
 });
 
 // Serve static files
-const __dirname = path.dirname(new URL(import.meta.url).pathname); // Resolve current directory
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
+// Redirect all unknown routes to the frontend's index.html
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
-// Connect to MongoDB and start the server
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log("Connected to MongoDB");
+
+        // Create the HTTP server
+        const server = http.createServer(app);
+        
+        // Initialize Socket.IO with the HTTP server
+        const io = new Server(server, {
+            cors: corsOptions,
+        });
+
+        // Socket.IO event handling
+        io.on("connection", (socket) => {
+            console.log("A user connected");
+            socket.on("message", (msg) => {
+                console.log("Message received:", msg);
+                io.emit("message", msg);
+            });
+
+            socket.on("disconnect", () => {
+                console.log("User disconnected");
+            });
+        });
+
+        // Start the server
+        const PORT = process.env.PORT || 3000;
+        server.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+        });
     })
     .catch((error) => {
         console.error("Failed to connect to MongoDB:", error.message);
     });
 
-// Export the app for Vercel
 export default app;
