@@ -21,7 +21,7 @@ const corsOptions = {
     methods: ["GET", "POST"],
     credentials: true, 
 };
-
+const __dirname = path.resolve();
 // Middleware
 app.use(cors(corsOptions)); 
 app.use(express.json());
@@ -43,14 +43,16 @@ app.use("/api/users", userRoutes);
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Success!" });
 });
-
-// Serve static files
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-app.use(express.static(path.join(__dirname, "/frontend/dist")));
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 // Redirect all unknown routes to the frontend's index.html
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+app.get("*", (_, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"), (err) => {
+        if (err) {
+            console.error("Error serving index.html:", err);
+            res.status(err.status).end();
+        }
+    });
 });
 
 // Connect to MongoDB
