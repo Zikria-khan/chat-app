@@ -1,19 +1,25 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    }
+      {
+          "src": "*.js",
+          "use": "@vercel/node"
+      }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api/index.js" 
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/dist/index.html" 
-    }
+      {
+          "src": "/(.*)",
+          "dest": "/"
+      }
+  ],
+  "headers": [
+      {
+          "source": "/(.*)",
+          "headers": [
+              { "key": "Access-Control-Allow-Origin", "value": "http://localhost:5173" },
+              { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+              { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+          ]
+      }
   ]
 }
